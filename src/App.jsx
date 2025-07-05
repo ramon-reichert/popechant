@@ -77,7 +77,7 @@ const handleSubmit = async () => {
       </div>
 
       <div style={{ marginBottom: '1rem' }}>
-        <label>Text:</label>
+        <label>Preface:</label>
         <textarea
           rows={10}
           style={{ width: '100%', padding: '0.75rem' }}
