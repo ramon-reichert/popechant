@@ -38,7 +38,7 @@ const handleSubmit = async () => {
         setOutput(`error code ${errData.error_code}: ${errData.error_message}`)
       } else {
         const errText = await res.text()
-        setOutput(`Erro ${res.status}: ${res.statusText}`)
+        setOutput(`Erro ${res.status} - ${res.statusText}: ${errText}`)
       }
       return
     }
@@ -88,13 +88,24 @@ const handleSubmit = async () => {
       </div>
 
       <button onClick={handleSubmit} disabled={loading} style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}>
-        {loading ? 'Enviando...' : 'Gerar'}
+        {loading ? 'Enviando...' : 'Gerar GABC'}
       </button>
 
-      <h2 style={{ marginTop: '2rem' }}>Resultado:</h2>
-      <pre style={{ background: '#3B3B3B', padding: '1rem', minHeight: '200px', whiteSpace: 'pre-wrap' }}>
-        {output}
-      </pre>
+     <h2 style={{ marginTop: '2rem' }}>Resultado:</h2>
+        <textarea
+          rows={10}
+          style={{ width: '100%', padding: '0.75rem', minHeight: '200px', whiteSpace: 'pre-wrap' }}
+          value={output}
+          onChange={(e) => setOutput(e.target.value)}
+        />
+      <button onClick={() => {
+         // You can implement the next step action here
+         console.log("Generate score clicked!");
+          }}
+        style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}
+> Gerar partitura
+</button>
+
     </div>
   )
 }
