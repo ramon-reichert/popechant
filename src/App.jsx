@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 function App() {
   const [header, setHeader] = useState({
@@ -13,6 +13,13 @@ function App() {
   const [text, setText] = useState('')
   const [output, setOutput] = useState('')
   const [loading, setLoading] = useState(false)
+
+const formRef = useRef(null);
+  const gabcInputRef = useRef(null);
+  const widthRef = useRef(null);
+  const heightRef = useRef(null);
+  const fontRef = useRef(null);
+  const fontsizeRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -55,18 +62,26 @@ const handleSubmit = async () => {
   }
 }
 
-const handleScore = async () => {
-  const encodedText = encodeURIComponent(output);
 
-  try {
-    await open('https://www.sourceandsummit.com/editor/legacy/?crop=0#' + encodedText, {
-  })
-   } catch (err) {
-    console.error(err)
-    setOutput('Erro ao gerar partitura.')
-  }
-  
-}  
+  const genScore = () => {
+   // Submit the form to Source & Summit
+   
+    if (!output.trim()) {
+      alert('GABC vazio. Gere o conteúdo antes.');
+      return;
+    }
+
+    // Fill hidden form inputs
+   // console.log("output")
+    gabcInputRef.current.value = output;
+    widthRef.current.value = header.width;
+    heightRef.current.value = header.height;
+    fontRef.current.value = header.font;
+    fontsizeRef.current.value = header.fontsize;
+
+    // Submit the form
+    formRef.current.submit();
+  };
 
   return (
     <div style={{ maxWidth: 700, margin: '2rem auto', fontFamily: 'sans-serif' }}>
@@ -112,10 +127,29 @@ const handleScore = async () => {
           value={output}
           onChange={(e) => setOutput(e.target.value)}
         />
-      <button onClick={handleScore}
-        style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}
-> Gerar partitura
-</button>
+
+
+      <button onClick={genScore} style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}
+      > Gerar partitura
+      </button>
+
+      
+      {/* Hidden form to submit to Source & Summit */}
+      <form
+        ref={formRef}
+        method="post"
+        action="https://www.sourceandsummit.com/editor/legacy/process.php"
+        target="_blank"
+        style={{ display: 'none' }}
+      >
+        <input type="hidden" name="gabc[]" ref={gabcInputRef} />
+        <input type="hidden" name="width" ref={widthRef} />
+        <input type="hidden" name="height" ref={heightRef} />
+        <input type="hidden" name="spacing" value="vichi" />
+        <input type="hidden" name="font" ref={fontRef} />
+        <input type="hidden" name="fontsize" ref={fontsizeRef} />
+        <input type="hidden" name="fmt" value="pdf" />
+      </form>
 
     </div>
   )
