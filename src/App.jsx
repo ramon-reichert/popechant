@@ -18,6 +18,7 @@ function App() {
     const { name, value } = e.target
     setHeader((prev) => ({ ...prev, [name]: value }))
   }
+
 const handleSubmit = async () => {
   setLoading(true)
   setOutput('')
@@ -53,6 +54,19 @@ const handleSubmit = async () => {
     setLoading(false)
   }
 }
+
+const handleScore = async () => {
+  const encodedText = encodeURIComponent(output);
+
+  try {
+    await open('https://www.sourceandsummit.com/editor/legacy/?crop=0#' + encodedText, {
+  })
+   } catch (err) {
+    console.error(err)
+    setOutput('Erro ao gerar partitura.')
+  }
+  
+}  
 
   return (
     <div style={{ maxWidth: 700, margin: '2rem auto', fontFamily: 'sans-serif' }}>
@@ -98,10 +112,7 @@ const handleSubmit = async () => {
           value={output}
           onChange={(e) => setOutput(e.target.value)}
         />
-      <button onClick={() => {
-         // You can implement the next step action here
-         console.log("Generate score clicked!");
-          }}
+      <button onClick={handleScore}
         style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}
 > Gerar partitura
 </button>
