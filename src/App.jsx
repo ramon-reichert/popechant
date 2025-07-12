@@ -1,25 +1,89 @@
 import { useState, useRef } from 'react';
 
+const headerFields = [
+  {
+    name: 'name',
+    label: 'Título',
+    placeholder: 'Digite o título...',
+    defaultValue: '',
+  },
+  {
+    name: 'user-notes',
+    label: 'Notas do usuário',
+    placeholder: 'Notas adicionais...',
+    defaultValue: '',
+  },
+  {
+    name: 'commentary',
+    label: 'Comentário',
+    placeholder: 'Ex: Tradição litúrgica...',
+    defaultValue: '',
+  },
+  {
+    name: 'width',
+    label: 'Largura',
+    placeholder: 'Ex: 7.3',
+    defaultValue: '7.3',
+  },
+  {
+    name: 'height',
+    label: 'Altura',
+    placeholder: 'Ex: 11.7',
+    defaultValue: '11.7',
+  },
+  {
+    name: 'crop',
+    label: 'Corte',
+    placeholder: 'Ex: true ou false',
+    defaultValue: 'false',
+  },
+  {
+    name: 'font',
+    label: 'Fonte',
+    placeholder: 'Ex: OFLSortsMillGoudy',
+    defaultValue: 'OFLSortsMillGoudy',
+  },
+  {
+    name: 'fontsize',
+    label: 'Tamanho da Fonte',
+    placeholder: 'Ex: 12',
+    defaultValue: '12',
+  },
+];
+
 function App() {
-  const [header, setHeader] = useState({
-    name: '',
-    fontsize: '12',
-    font: 'OFLSortsMillGoudy',
-    width: '7.3',
-    height: '11.7',
-    clef: 'c3',
-  });
+  const initialHeader = headerFields.reduce((acc, field) => {
+    acc[field.name] = field.defaultValue;
+    return acc;
+  }, {});
+  const [header, setHeader] = useState(initialHeader);
   const [dialogue, setDialogue] = useState('regional');
   const [text, setText] = useState('');
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // ✅ Valid hook declarations
   const formRef = useRef(null);
   const gabcInputRef = useRef(null);
+  const nameRef = useRef(null);
+  const userNotesRef = useRef(null);
+  const commentaryRef = useRef(null);
   const widthRef = useRef(null);
   const heightRef = useRef(null);
+  const cropRef = useRef(null);
   const fontRef = useRef(null);
   const fontsizeRef = useRef(null);
+
+  const refs = {
+    name: nameRef,
+    'user-notes': userNotesRef,
+    commentary: commentaryRef,
+    width: widthRef,
+    height: heightRef,
+    crop: cropRef,
+    font: fontRef,
+    fontsize: fontsizeRef,
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,7 +103,6 @@ function App() {
 
       const contentType = res.headers.get('content-type') || '';
 
-      // Handle status codes
       if (!res.ok) {
         if (contentType.includes('application/json')) {
           const errData = await res.json();
@@ -53,7 +116,6 @@ function App() {
         return;
       }
 
-      // On success
       const data = await res.json();
       setOutput(data.gabc || 'Nenhum conteúdo gabc retornado.');
     } catch (err) {
@@ -65,22 +127,18 @@ function App() {
   };
 
   const genScore = () => {
-    // Submit the form to Source & Summit
-
     if (!output.trim()) {
       alert('GABC vazio. Gere o conteúdo antes.');
       return;
     }
 
-    // Fill hidden form inputs
-    // console.log("output")
     gabcInputRef.current.value = output;
-    widthRef.current.value = header.width;
-    heightRef.current.value = header.height;
-    fontRef.current.value = header.font;
-    fontsizeRef.current.value = header.fontsize;
+    headerFields.forEach((field) => {
+      if (refs[field.name].current) {
+        refs[field.name].current.value = header[field.name];
+      }
+    });
 
-    // Submit the form
     formRef.current.submit();
   };
 
@@ -91,56 +149,37 @@ function App() {
       <h1>PopeChant Generator</h1>
 
       <fieldset style={{ padding: '1rem', marginBottom: '1rem' }}>
-        <legend>Header</legend>
-        <input
-          name="name"
-          placeholder="Title"
-          value={header.name}
-          onChange={handleChange}
-          style={{ width: '100%' }}
-        />
-        <input
-          name="fontsize"
-          placeholder="Font size"
-          value={header.fontsize}
-          onChange={handleChange}
-        />
-        <input
-          name="font"
-          placeholder="Font"
-          value={header.font}
-          onChange={handleChange}
-        />
-        <input
-          name="width"
-          placeholder="Width"
-          value={header.width}
-          onChange={handleChange}
-        />
-        <input
-          name="height"
-          placeholder="Height"
-          value={header.height}
-          onChange={handleChange}
-        />
-        <input
-          name="clef"
-          placeholder="Clef"
-          value={header.clef}
-          onChange={handleChange}
-        />
+        <legend>Cabeçalho</legend>
+        {headerFields.map((field) => (
+          <div key={field.name} style={{ marginBottom: '1rem' }}>
+            <label
+              htmlFor={field.name}
+              style={{ display: 'block', fontWeight: 'bold' }}
+            >
+              {field.label}
+            </label>
+            <input
+              id={field.name}
+              name={field.name}
+              placeholder={field.placeholder}
+              value={header[field.name]}
+              onChange={handleChange}
+              style={{ width: '100%', padding: '0.5rem' }}
+            />
+          </div>
+        ))}
       </fieldset>
 
       <div style={{ marginBottom: '1rem' }}>
-        <label>Dialogue type: </label>
+        <label>Tipo de diálogo: </label>
         <select value={dialogue} onChange={(e) => setDialogue(e.target.value)}>
           <option value="regional">Regional</option>
-          <option value="roman">Roman</option>
+          <option value="roman">Romano</option>
         </select>
       </div>
 
       <div style={{ marginBottom: '1rem' }}>
-        <label>Preface:</label>
+        <label>Prefácio:</label>
         <textarea
           rows={10}
           style={{ width: '100%', padding: '0.75rem' }}
@@ -175,7 +214,6 @@ function App() {
         onClick={genScore}
         style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}
       >
-        {' '}
         Gerar partitura
       </button>
 
@@ -188,11 +226,15 @@ function App() {
         style={{ display: 'none' }}
       >
         <input type="hidden" name="gabc[]" ref={gabcInputRef} />
-        <input type="hidden" name="width" ref={widthRef} />
-        <input type="hidden" name="height" ref={heightRef} />
+        {headerFields.map((field) => (
+          <input
+            key={field.name}
+            type="hidden"
+            name={field.name}
+            ref={refs[field.name]}
+          />
+        ))}
         <input type="hidden" name="spacing" value="vichi" />
-        <input type="hidden" name="font" ref={fontRef} />
-        <input type="hidden" name="fontsize" ref={fontsizeRef} />
         <input type="hidden" name="fmt" value="pdf" />
       </form>
     </div>
