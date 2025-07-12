@@ -1,0 +1,6 @@
+{
+  "singleQuote": true,
+  "semi": true,
+  "endOfLine": "crlf",
+  "trailingComma": "es5"
+}
