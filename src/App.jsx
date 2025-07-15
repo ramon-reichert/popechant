@@ -158,24 +158,58 @@ function App() {
 
       <fieldset style={{ padding: '1rem', marginBottom: '1rem' }}>
         <legend>Cabeçalho</legend>
-        {headerFields.map((field) => (
-          <div key={field.name} style={{ marginBottom: '1rem' }}>
-            <label
-              htmlFor={field.name}
-              style={{ display: 'block', fontWeight: 'bold' }}
-            >
-              {field.label}
-            </label>
-            <input
-              id={field.name}
-              name={field.name}
-              placeholder={field.placeholder}
-              value={header[field.name]}
-              onChange={handleChange}
-              style={{ width: '100%', padding: '0.5rem' }}
-            />
-          </div>
+       {headerFields.map((field) => (
+  <div key={field.name} style={{ marginBottom: '1rem' }}>
+    <label
+      htmlFor={field.name}
+      style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.25rem' }}
+    >
+      {field.label}
+    </label>
+
+    {field.name === 'clef' ? (
+      <select
+        id={field.name}
+        name={field.name}
+        value={header[field.name]}
+        onChange={handleChange}
+        style={{ width: '100%', padding: '0.5rem' }}
+      >
+        {['c1', 'c2', 'c3', 'c4', 'f1', 'f2', 'f3', 'f4'].map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
         ))}
+      </select>
+    ) : field.name === 'croppdf' ? (
+      <select
+        id={field.name}
+        name={field.name}
+        value={header[field.name]}
+        onChange={(e) =>
+          setHeader((prev) => ({ ...prev, [field.name]: `\`${e.target.value}\`` }))
+        }
+        style={{ width: '100%', padding: '0.5rem' }}
+      >
+        {['true', 'false'].map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    ) : (
+      <input
+        id={field.name}
+        name={field.name}
+        placeholder={field.placeholder}
+        value={header[field.name]}
+        onChange={handleChange}
+        style={{ width: '100%', padding: '0.5rem' }}
+      />
+    )}
+  </div>
+))}
+
       </fieldset>
 
       <div style={{ marginBottom: '1rem' }}>
