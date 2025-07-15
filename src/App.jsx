@@ -20,6 +20,12 @@ const headerFields = [
     defaultValue: '',
   },
   {
+    name: 'clef',
+    label: 'Clave',
+    placeholder: 'c3',
+    defaultValue: 'c3',
+  },
+  {
     name: 'width',
     label: 'Largura',
     placeholder: 'Ex: 7.3',
@@ -32,10 +38,10 @@ const headerFields = [
     defaultValue: '11.7',
   },
   {
-    name: 'crop',
+    name: 'croppdf',
     label: 'Corte',
     placeholder: 'Ex: true ou false',
-    defaultValue: 'false',
+    defaultValue: `false`,
   },
   {
     name: 'font',
@@ -62,12 +68,12 @@ function App() {
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // ✅ Valid hook declarations
   const formRef = useRef(null);
   const gabcInputRef = useRef(null);
   const nameRef = useRef(null);
   const userNotesRef = useRef(null);
   const commentaryRef = useRef(null);
+  const clefRef = useRef(null);
   const widthRef = useRef(null);
   const heightRef = useRef(null);
   const cropRef = useRef(null);
@@ -78,9 +84,10 @@ function App() {
     name: nameRef,
     'user-notes': userNotesRef,
     commentary: commentaryRef,
+    clef: clefRef,
     width: widthRef,
     height: heightRef,
-    crop: cropRef,
+    croppdf: cropRef,
     font: fontRef,
     fontsize: fontsizeRef,
   };
@@ -132,13 +139,14 @@ function App() {
       return;
     }
 
-    gabcInputRef.current.value = output;
+    gabcInputRef.current.value =
+      '%%\n\n' + '(' + clefRef.current.value + ')' + output;
+
     headerFields.forEach((field) => {
       if (refs[field.name].current) {
         refs[field.name].current.value = header[field.name];
       }
     });
-
     formRef.current.submit();
   };
 
