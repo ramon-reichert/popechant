@@ -44,12 +44,6 @@ const headerFields = [
     defaultValue: `false`,
   },
   {
-    name: 'font',
-    label: 'Fonte',
-    placeholder: 'Ex: OFLSortsMillGoudy',
-    defaultValue: 'OFLSortsMillGoudy',
-  },
-  {
     name: 'fontsize',
     label: 'Tamanho da Fonte',
     placeholder: 'Ex: 12',
@@ -67,6 +61,7 @@ function App() {
   const [text, setText] = useState('');
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
+  const initialStyle = 0;
 
   const formRef = useRef(null);
   const gabcInputRef = useRef(null);
@@ -77,7 +72,7 @@ function App() {
   const widthRef = useRef(null);
   const heightRef = useRef(null);
   const cropRef = useRef(null);
-  const fontRef = useRef(null);
+//  const fontRef = useRef(null);
   const fontsizeRef = useRef(null);
 
   const refs = {
@@ -88,7 +83,7 @@ function App() {
     width: widthRef,
     height: heightRef,
     croppdf: cropRef,
-    font: fontRef,
+ //   font: fontRef,
     fontsize: fontsizeRef,
   };
 
@@ -140,7 +135,7 @@ function App() {
     }
 
     gabcInputRef.current.value =
-      '%%\n\n' + '(' + clefRef.current.value + ')' + output;
+      'initial-style: ' + initialStyle + ';\n%%\n\n' + '(' + clefRef.current.value + ')' + output;
 
     headerFields.forEach((field) => {
       if (refs[field.name].current) {
@@ -158,11 +153,15 @@ function App() {
 
       <fieldset style={{ padding: '1rem', marginBottom: '1rem' }}>
         <legend>Cabeçalho</legend>
-       {headerFields.map((field) => (
+      {headerFields.map((field) => (
   <div key={field.name} style={{ marginBottom: '1rem' }}>
     <label
       htmlFor={field.name}
-      style={{ display: 'block', fontWeight: 'bold', marginBottom: '0.25rem' }}
+      style={{
+        display: field.name === 'croppdf' ? 'inline-block' : 'block',
+        fontWeight: 'bold',
+        marginBottom: '0.25rem',
+      }}
     >
       {field.label}
     </label>
@@ -182,21 +181,19 @@ function App() {
         ))}
       </select>
     ) : field.name === 'croppdf' ? (
-      <select
+      <input
+        type="checkbox"
         id={field.name}
         name={field.name}
-        value={header[field.name]}
+        checked={header[field.name] === '`true`'}
         onChange={(e) =>
-          setHeader((prev) => ({ ...prev, [field.name]: `\`${e.target.value}\`` }))
+          setHeader((prev) => ({
+            ...prev,
+            [field.name]: e.target.checked ? '`true`' : '`false`',
+          }))
         }
-        style={{ width: '100%', padding: '0.5rem' }}
-      >
-        {['true', 'false'].map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
+        style={{ marginLeft: '0.5rem' }}
+      />
     ) : (
       <input
         id={field.name}
@@ -209,6 +206,7 @@ function App() {
     )}
   </div>
 ))}
+
 
       </fieldset>
 
@@ -276,6 +274,7 @@ function App() {
             ref={refs[field.name]}
           />
         ))}
+        <input type="hidden" name="font" value="OFLSortsMillGoudy" />
         <input type="hidden" name="spacing" value="vichi" />
         <input type="hidden" name="fmt" value="pdf" />
       </form>
