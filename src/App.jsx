@@ -4,9 +4,9 @@ const headerFields = [
   {
     name: 'name',
     label: 'Título',
-    placeholder: 'Digite o título...',
+    placeholder: 'Ex: Prefácio da Páscoa I',
     defaultValue: '',
-  },
+  },/*
   {
     name: 'user-notes',
     label: 'Notas do usuário',
@@ -18,7 +18,7 @@ const headerFields = [
     label: 'Comentário',
     placeholder: 'Ex: Tradição litúrgica...',
     defaultValue: '',
-  },
+  },*/
   {
     name: 'clef',
     label: 'Clave',
@@ -28,18 +28,18 @@ const headerFields = [
   {
     name: 'width',
     label: 'Largura',
-    placeholder: 'Ex: 7.3',
+    placeholder: 'Ex: 7.3 inches',
     defaultValue: '7.3',
   },
   {
     name: 'height',
     label: 'Altura',
-    placeholder: 'Ex: 11.7',
+    placeholder: 'Ex: 11.7 inches',
     defaultValue: '11.7',
   },
   {
     name: 'croppdf',
-    label: 'Corte',
+    label: 'Cortar margens',
     placeholder: 'Ex: true ou false',
     defaultValue: `false`,
   },
@@ -66,8 +66,8 @@ function App() {
   const formRef = useRef(null);
   const gabcInputRef = useRef(null);
   const nameRef = useRef(null);
-  const userNotesRef = useRef(null);
-  const commentaryRef = useRef(null);
+ // const userNotesRef = useRef(null);
+ // const commentaryRef = useRef(null);
   const clefRef = useRef(null);
   const widthRef = useRef(null);
   const heightRef = useRef(null);
@@ -77,8 +77,8 @@ function App() {
 
   const refs = {
     name: nameRef,
-    'user-notes': userNotesRef,
-    commentary: commentaryRef,
+  //  'user-notes': userNotesRef,
+  //  commentary: commentaryRef,
     clef: clefRef,
     width: widthRef,
     height: heightRef,
@@ -152,7 +152,7 @@ function App() {
       <h1>PopeChant Generator</h1>
 
       <fieldset style={{ padding: '1rem', marginBottom: '1rem' }}>
-        <legend>Cabeçalho</legend>
+        <legend>Opções do documento</legend>
       {headerFields.map((field) => (
   <div key={field.name} style={{ marginBottom: '1rem' }}>
     <label
@@ -219,11 +219,11 @@ function App() {
       </div>
 
       <div style={{ marginBottom: '1rem' }}>
-        <label>Prefácio:</label>
+        <label>Digite o texto divido em linhas:</label>
         <textarea
           rows={10}
           style={{ width: '100%', padding: '0.75rem' }}
-          placeholder="Digite o texto litúrgico aqui..."
+          placeholder='Ex: Na verdade, é digno e justo, //cadência "inicial"\né nosso dever e salvação proclamar vossa glória, ó Pai, em todo tempo, //cadência "inicial"\n mas, com maior júbilo, louvar-vos nesta noite, ( neste dia ou neste tempo ) //cadência mediana + (diretiva ou "rúbrica")\n porque Cristo, nossa Páscoa, foi imolado. //cadência final\n\n É ele o verdadeiro Cordeiro, que tirou o pecado do mundo; //cadência "inicial"\n morrendo, destruiu a nossa morte //cadência mediana\n e, ressurgindo, restaurou a vida. //cadência final\n\n Por isso, //exceção de início do parágrafo conclusivo\n transbordando de alegria pascal, exulta a criação por toda a terra; //cadência "inicial"\n também as Virtudes celestes e as Potestades angélicas proclamam um hino à vossa glória, //cadência "inicial"\n cantando //cadência mediana\n a uma só voz: //cadência final'
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
