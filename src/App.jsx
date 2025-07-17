@@ -57,7 +57,7 @@ function App() {
     return acc;
   }, {});
   const [header, setHeader] = useState(initialHeader);
-  const [dialogue, setDialogue] = useState('regional');
+  const [dialogue, setDialogue] = useState('solemn');
   const [text, setText] = useState('');
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -130,7 +130,7 @@ function App() {
 
   const genScore = () => {
     if (!output.trim()) {
-      alert('GABC vazio. Gere o conteúdo antes.');
+      setOutput('GABC vazio. Gere o conteúdo antes.');
       return;
     }
 
@@ -279,7 +279,7 @@ function App() {
         <label>Tipo de diálogo: </label>
         <select value={dialogue} onChange={(e) => setDialogue(e.target.value)}>
           <option value="regional">Regional</option>
-          <option value="roman">Romano</option>
+          <option value="solemn">Solene</option>
         </select>
       </div>
 
