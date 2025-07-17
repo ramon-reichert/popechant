@@ -154,22 +154,34 @@ function App() {
   return (
     <div
       style={{
-        maxWidth: 900,
+        maxWidth: '900px',
         margin: '2rem auto',
-        padding: '1rem',
-        textAlign: 'left',
-        fontFamily: 'sans-serif',
+        padding: '1rem 2rem',
+        fontFamily: "'EB Garamond', serif",
+        backgroundColor: '#f8f4dcff',
+        color: '#222',
+        borderRadius: '6px',
+        boxShadow: '0 0 10px rgba(0,0,0,0.05)',
       }}
     >
-      <h1 style={{ marginTop: '1rem', marginBottom: '1rem' }}>
-        PopeChant Generator
-      </h1>
-
-      <div style={{ marginBottom: '3rem' }}>
-        <label>
-          Gerador automático de partituras em estilo gregoriano. Aplica a
-          melodia solene do Prefácio da Missa sobre um dado texto.
-        </label>
+      <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.25rem' }}>
+          PopeChant Generator
+        </h1>
+        <div style={{ marginBottom: '3rem' }}>
+          <label>
+            Gerador automático de partituras em estilo gregoriano. Aplica a
+            melodia solene do Prefácio da Missa sobre um dado texto.
+          </label>
+        </div>
+        <div
+          style={{
+            width: '120px',
+            height: '2px',
+            backgroundColor: '#990000',
+            margin: '0 auto',
+          }}
+        ></div>
       </div>
 
       <fieldset
@@ -247,7 +259,13 @@ function App() {
                   value={header[field.name]}
                   onChange={handleChange}
                   style={{
-                    padding: '0.5rem',
+                    padding: '0.4rem 0.5rem',
+                    fontFamily: "'EB Garamond', serif",
+                    fontSize: '1rem',
+                    color: '#333',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    backgroundColor: '#fff',
                     width: isTitle ? '100%' : '30px',
                   }}
                 />
@@ -266,10 +284,19 @@ function App() {
       </div>
 
       <div style={{ marginBottom: '0.5rem' }}>
-        <label>Digite o texto divido em linhas:</label>
+        <legend>Digite o texto divido em linhas:</legend>
         <textarea
           rows={15}
-          style={{ width: '100%', padding: '1rem' }}
+          style={{
+            width: '100%',
+            padding: '0.4rem 0.5rem',
+            fontFamily: "'EB Garamond', serif",
+            fontSize: '1rem',
+            color: '#333',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            backgroundColor: '#fff',
+          }}
           placeholder='Ex: 
 Na verdade, é digno e justo, //cadência "inicial"
 é nosso dever e salvação proclamar vossa glória, ó Pai, em todo tempo, //cadência "inicial"
@@ -303,18 +330,24 @@ a uma só voz: //cadência final'
       </button>
 
       <div style={{ marginBottom: '0.5rem' }}>
-        <label>
+        <legend>
           Modifique o resultado conforme a necessidade e então clique para gerar
           a partitura em PDF:
-        </label>
+        </legend>
 
         <textarea
           rows={10}
           style={{
             width: '100%',
-            padding: '1rem',
             minHeight: '200px',
             whiteSpace: 'pre-wrap',
+            padding: '0.4rem 0.5rem',
+            fontFamily: "'EB Garamond', serif",
+            fontSize: '1rem',
+            color: '#333',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            backgroundColor: '#fff',
           }}
           value={output}
           onChange={(e) => setOutput(e.target.value)}
