@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 
 const headerFields = [
   {
@@ -6,19 +6,7 @@ const headerFields = [
     label: 'Título',
     placeholder: 'Ex: Prefácio da Páscoa I',
     defaultValue: '',
-  } /*
-  {
-    name: 'user-notes',
-    label: 'Notas do usuário',
-    placeholder: 'Notas adicionais...',
-    defaultValue: '',
   },
-  {
-    name: 'commentary',
-    label: 'Comentário',
-    placeholder: 'Ex: Tradição litúrgica...',
-    defaultValue: '',
-  },*/,
   {
     name: 'clef',
     label: 'Clave',
@@ -47,13 +35,13 @@ const headerFields = [
     name: 'croppdf',
     label: 'Cortar margens',
     placeholder: 'Ex: true ou false',
-    defaultValue: `false`,
+    defaultValue: 'false',
   },
 ];
 
 function App() {
   const initialHeader = headerFields.reduce((acc, field) => {
-    acc[field.name] = field.defaultValue;
+    acc[field.name] = field.name === 'croppdf' ? false : field.defaultValue;
     return acc;
   }, {});
   const [header, setHeader] = useState(initialHeader);
@@ -63,33 +51,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const initialStyle = 0;
 
-  const formRef = useRef(null);
-  const gabcInputRef = useRef(null);
-  const nameRef = useRef(null);
-  // const userNotesRef = useRef(null);
-  // const commentaryRef = useRef(null);
-  const clefRef = useRef(null);
-  const widthRef = useRef(null);
-  const heightRef = useRef(null);
-  const cropRef = useRef(null);
-  //  const fontRef = useRef(null);
-  const fontsizeRef = useRef(null);
-
-  const refs = {
-    name: nameRef,
-    //  'user-notes': userNotesRef,
-    //  commentary: commentaryRef,
-    clef: clefRef,
-    width: widthRef,
-    height: heightRef,
-    croppdf: cropRef,
-    //   font: fontRef,
-    fontsize: fontsizeRef,
-  };
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setHeader((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    const fieldValue = type === 'checkbox' ? checked : value;
+    setHeader((prev) => ({ ...prev, [name]: fieldValue }));
   };
 
   const handleSubmit = async () => {
@@ -134,21 +99,44 @@ function App() {
       return;
     }
 
-    gabcInputRef.current.value =
-      'initial-style: ' +
-      initialStyle +
-      ';\n%%\n\n' +
-      '(' +
-      clefRef.current.value +
-      ')' +
-      output;
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://www.sourceandsummit.com/editor/legacy/process.php';
+    form.target = '_blank';
 
+    const addHidden = (name, value) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    };
+
+    // Add GABC field
+    addHidden(
+      'gabc[]',
+      `name: ${header.name};\ninitial-style: ${initialStyle};\n%%\n\n(${header.clef})${output}`
+    );
+
+    // Add all header fields
     headerFields.forEach((field) => {
-      if (refs[field.name].current) {
-        refs[field.name].current.value = header[field.name];
-      }
+      const valueF =
+        field.name === 'croppdf'
+          ? header[field.name]
+            ? 'true'
+            : 'false'
+          : header[field.name];
+      addHidden(field.name, valueF);
     });
-    formRef.current.submit();
+
+    // Add fixed fields
+    addHidden('font', 'OFLSortsMillGoudy');
+    addHidden('spacing', 'vichi');
+    addHidden('fmt', 'pdf');
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
   };
 
   return (
@@ -211,14 +199,7 @@ function App() {
                 flex: isTitle ? '1 1 100%' : '0 0 auto',
               }}
             >
-              <label
-                htmlFor={field.name}
-                style={{
-                  // fontWeight: 'bold',
-                  whiteSpace: 'nowrap',
-                  minWidth: '20px',
-                }}
-              >
+              <label htmlFor={field.name} style={{ whiteSpace: 'nowrap' }}>
                 {field.label}
               </label>
 
@@ -243,11 +224,11 @@ function App() {
                   type="checkbox"
                   id={field.name}
                   name={field.name}
-                  checked={header[field.name] === '`true`'}
+                  checked={header[field.name] === true}
                   onChange={(e) =>
                     setHeader((prev) => ({
                       ...prev,
-                      [field.name]: e.target.checked ? '`true`' : '`false`',
+                      [field.name]: e.target.checked,
                     }))
                   }
                 />
@@ -284,7 +265,7 @@ function App() {
       </div>
 
       <div style={{ marginBottom: '0.5rem' }}>
-        <legend>Digite o texto divido em linhas:</legend>
+        <legend>Digite o texto dividido em linhas:</legend>
         <textarea
           rows={15}
           style={{
@@ -297,21 +278,21 @@ function App() {
             borderRadius: '4px',
             backgroundColor: '#fff',
           }}
-          placeholder='Ex: 
+          placeholder={`Ex: 
 Na verdade, é digno e justo, //cadência "inicial"
 é nosso dever e salvação proclamar vossa glória, ó Pai, em todo tempo, //cadência "inicial"
 mas, com maior júbilo, louvar-vos nesta noite, ( neste dia ou neste tempo ) //cadência mediana + (diretiva ou "rúbrica")
 porque Cristo, nossa Páscoa, foi imolado. //cadência final
-    
+
 É ele o verdadeiro Cordeiro, que tirou o pecado do mundo; //cadência "inicial"
 morrendo, destruiu a nossa morte //cadência mediana
 e, ressurgindo, restaurou a vida. //cadência final
-     
+
 Por isso, //exceção de início do parágrafo conclusivo
 transbordando de alegria pascal, exulta a criação por toda a terra; //cadência "inicial"
 também as Virtudes celestes e as Potestades angélicas proclamam um hino à vossa glória, //cadência "inicial"
 cantando //cadência mediana
-a uma só voz: //cadência final'
+a uma só voz: //cadência final`}
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
@@ -336,7 +317,7 @@ a uma só voz: //cadência final'
         </legend>
 
         <textarea
-          rows={10}
+          rows={15}
           style={{
             width: '100%',
             minHeight: '200px',
@@ -360,28 +341,6 @@ a uma só voz: //cadência final'
       >
         Gerar partitura
       </button>
-
-      {/* Hidden form to submit to Source & Summit */}
-      <form
-        ref={formRef}
-        method="post"
-        action="https://www.sourceandsummit.com/editor/legacy/process.php"
-        target="_blank"
-        style={{ display: 'none' }}
-      >
-        <input type="hidden" name="gabc[]" ref={gabcInputRef} />
-        {headerFields.map((field) => (
-          <input
-            key={field.name}
-            type="hidden"
-            name={field.name}
-            ref={refs[field.name]}
-          />
-        ))}
-        <input type="hidden" name="font" value="OFLSortsMillGoudy" />
-        <input type="hidden" name="spacing" value="vichi" />
-        <input type="hidden" name="fmt" value="pdf" />
-      </form>
     </div>
   );
 }
