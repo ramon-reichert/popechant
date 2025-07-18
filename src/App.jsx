@@ -269,7 +269,7 @@ function App() {
         <textarea
           rows={15}
           style={{
-            width: '100%',
+            width: 'calc(100% - 1rem)',
             padding: '0.4rem 0.5rem',
             fontFamily: "'EB Garamond', serif",
             fontSize: '1rem',
@@ -319,7 +319,7 @@ a uma só voz: //cadência final`}
         <textarea
           rows={15}
           style={{
-            width: '100%',
+            width: 'calc(100% - 1rem)',
             minHeight: '200px',
             whiteSpace: 'pre-wrap',
             padding: '0.4rem 0.5rem',
