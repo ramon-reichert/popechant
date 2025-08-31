@@ -68,19 +68,10 @@ function App() {
         body: JSON.stringify({ header, dialogue, text }),
       });
 
-      const contentType = res.headers.get('content-type') || '';
-
       if (!res.ok) {
-        if (contentType.includes('application/json')) {
-          const errData = await res.json();
-          setOutput(
-            `error code ${errData.error_code}: ${errData.error_message}`
-          );
-        } else {
-          const errText = await res.text();
-          setOutput(`Erro ${res.status} - ${res.statusText}: ${errText}`);
-        }
-        return;
+         const errText = await res.text();
+         setOutput(`Erro ${res.status}: ${errText}`);
+         return;
       }
 
       const data = await res.json();
