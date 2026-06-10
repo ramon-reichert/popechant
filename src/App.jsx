@@ -8,12 +8,6 @@ const headerFields = [
     defaultValue: '',
   },
   {
-    name: 'clef',
-    label: 'Clave',
-    placeholder: 'c3',
-    defaultValue: 'c3',
-  },
-  {
     name: 'width',
     label: 'Largura (pol.)',
     placeholder: '7.2',
@@ -69,9 +63,9 @@ function App() {
       });
 
       if (!res.ok) {
-         const errText = await res.text();
-         setOutput(`Erro ${res.status}: ${errText}`);
-         return;
+        const errText = await res.text();
+        setOutput(`Erro ${res.status}: ${errText}`);
+        return;
       }
 
       const data = await res.json();
@@ -106,7 +100,7 @@ function App() {
     // Add GABC field
     addHidden(
       'gabc[]',
-      `name: ${header.name};\ninitial-style: ${initialStyle};\n%%\n\n(${header.clef})${output}`
+      `name: ${header.name};\ninitial-style: ${initialStyle};\n%%\n\n(c3)${output}`
     );
 
     // Add all header fields
@@ -194,23 +188,7 @@ function App() {
                 {field.label}
               </label>
 
-              {field.name === 'clef' ? (
-                <select
-                  id={field.name}
-                  name={field.name}
-                  value={header[field.name]}
-                  onChange={handleChange}
-                  style={{ padding: '0.5rem', width: '60px' }}
-                >
-                  {['c1', 'c2', 'c3', 'c4', 'f1', 'f2', 'f3', 'f4'].map(
-                    (opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
-                      </option>
-                    )
-                  )}
-                </select>
-              ) : isCheckbox ? (
+              {isCheckbox ? (
                 <input
                   type="checkbox"
                   id={field.name}
